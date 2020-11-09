@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class TeUserPersistence {
-    @PersistenceContext(unitName = "")
+    @PersistenceContext(unitName = "TextEditor")
     private EntityManager entityManager;
 
     public List<TeUser> retrieveAllUsers() throws TEException {
