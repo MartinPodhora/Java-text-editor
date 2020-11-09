@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.myapp</groupId>
+  <artifactId>texteditor</artifactId>
+  <version>1.0</version>
+  <packaging>war</packaging>
+
+  <name>Java2 Maven Webapp</name>
+
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+
+    <liberty.server.name>${project.artifactId}-server</liberty.server.name>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.microprofile</groupId>
+      <artifactId>microprofile</artifactId>
+      <version>3.2</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <!-- JEE8 Web Profile - http://download.oracle.com/otn-pub/jcp/java_ee_web_profile-8-final-eval-spec/WebProfile.pdf -->
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-web-api</artifactId>
+      <version>8.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- DS: Chyba: Annotation processor 'org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor' not found
+         Riesenie: compiler generuje JPA metamodel a ten potrebuje processor v tejto dependency -->
+    <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-jpamodelgen -->
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-jpamodelgen</artifactId>
+      <version>6.0.0.Alpha6</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator-annotation-processor -->
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator-annotation-processor</artifactId>
+      <version>7.0.0.Alpha6</version>
+    </dependency>
+    <!-- DS: Bey tejto dependency Compiler daval Fatal Error. Podpora MAC OS -->
+    <dependency>
+      <groupId>com.apple</groupId>
+      <artifactId>AppleJavaExtensions</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>texteditor</finalName>
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+
+
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.3</version>
+          <configuration>
+            <failOnMissingWebXml>false</failOnMissingWebXml>
+            <webResources>
+              <resource>
+                <directory>src/main/resources</directory>
+              </resource>
+            </webResources>
+            <packagingExcludes>
+              WEB-INF/lib/com.ibm.websphere.appserver*.jar
+            </packagingExcludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+            <compilerArguments>
+              <!-- Pouzitie -Xlint:unchecked sposobi Fatal Error pri kompilacii, vyrobe metamodel JPA classes -->
+              <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+            </compilerArguments>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <!-- Maven handled Open Liberty - nothing pre-installed would be needed -->
+    <profile>
+      <id>liberty</id>
+      <build>
+        <plugins>
+          <!-- Open Liberty -->
+          <plugin>
+            <groupId>net.wasdev.wlp.maven.plugins</groupId>
+            <artifactId>liberty-maven-plugin</artifactId>
+            <version>2.6.4</version>
+            <configuration>
+              <!-- defines debug port, default port 7777 -->
+              <jvmOptions>
+                <param>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=7777</param>
+              </jvmOptions>
+              <serverName>${liberty.server.name}</serverName>
+              <configFile>src/main/conf/server.xml</configFile>
+              <!-- Defines usage of config. For localhost development it is not needed -->
+              <!-- serverEnv>src/main/conf/server.env</serverEnv> -->
+              <installAppPackages>project</installAppPackages>
+              <looseApplication>true</looseApplication>
+              <stripVersion>true</stripVersion>
+              <packageFile>${project.build.directory}/${project.artifactId}.zip</packageFile>
+              <include>usr</include>
+              <assemblyArtifact>
+                <groupId>io.openliberty</groupId>
+                <artifactId>openliberty-runtime</artifactId>
+                <version>RELEASE</version>
+                <type>zip</type>
+              </assemblyArtifact>
+              <skipLibertyPackage>true</skipLibertyPackage>
+            </configuration>
+            <executions>
+              <execution>
+                <id>stop-server-before-clean</id>
+                <phase>pre-clean</phase>
+                <goals>
+                  <goal>stop-server</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>create-server</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>install-server</goal>
+                  <goal>create-server</goal>
+                </goals>
+                <configuration>
+                  <serverEnv>${basedir}/build.properties</serverEnv>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-feature</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>install-feature</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>install-apps</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>install-apps</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>package-server</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>package-server</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+
+          <!-- Resource bundle -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>copy-jdbc-jar-to-server2</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>src/main/conf/lib</directory>
+                    </resource>
+                  </resources>
+                  <outputDirectory>${project.build.directory}/liberty/wlp/usr/servers/${liberty.server.name}/lib</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
