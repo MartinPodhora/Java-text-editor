@@ -30,7 +30,6 @@ public class TeDocument {
     @Column(name = "DOC_CONTENT")
     private String content;
 
-    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TE_USER_USERNAME", referencedColumnName = "USERNAME")
     private TeUser user;

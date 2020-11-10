@@ -38,11 +38,19 @@ public class TeUserService {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Get a user by username")
     public TeUser getUser(@PathParam("username") String username) throws TEException {
         return dao.findUser(username);
+    }
+
+    @POST
+    @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "get user if login was successful")
+    public TeUser loginUser(TeUser user) throws TEException {
+        return dao.logIn(user);
     }
 
     @POST
@@ -62,10 +70,10 @@ public class TeUserService {
     }
 
     @DELETE
-    @Path("/delete/{id}")
+    @Path("/delete/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Delete text editor user")
-    public String deleteUser(@PathParam("username") String username) throws TEException {
+    public TeUser deleteUser(@PathParam("username") String username) throws TEException {
         return dao.deleteUser(username);
     }
 }

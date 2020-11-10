@@ -1,16 +1,13 @@
 package com.myapp.model;
 
-
-import javax.persistence.CascadeType;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Entity
 @Table(name = "TE_USER")
@@ -32,6 +29,7 @@ public class TeUser {
     @Size(min = 1, max = 20)
     private String lastName;
 
+    @JsonbTransient
     @Column(name = "USER_PASSWORD", nullable = false)
     @NotNull(message = "password at text editor user cannot be null")
     @Size(min = 1, max = 50)
@@ -44,21 +42,17 @@ public class TeUser {
     @Column(name = "PHOTO")
     private String photo;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<TeDocument> documents;
-
     public TeUser() {
 
     }
 
-    public TeUser(String username, String firstName, String lastName, String password, String email, String photo, List<TeDocument> documents) {
+    public TeUser(String username, String firstName, String lastName, String password, String email, String photo) {
         this.setUsername(username);
         this.setFirstName(firstName);
         this.setLastName(lastName);
         this.setPassword(password);
         this.setEmail(email);
         this.setPhoto(photo);
-        this.setDocuments(documents);
     }
 
     public String getUsername() {
@@ -107,13 +101,5 @@ public class TeUser {
 
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public List<TeDocument> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(List<TeDocument> documents) {
-        this.documents = documents;
     }
 }

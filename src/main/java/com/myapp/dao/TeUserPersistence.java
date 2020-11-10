@@ -57,10 +57,11 @@ public class TeUserPersistence {
         return paUser;
     }
 
-    public String deleteUser(String username) throws TEException {
+    public TeUser deleteUser(String username) throws TEException {
         TeUser user = this.findUser(username);
+
         this.entityManager.remove(user);
-        return username;
+        return user;
     }
 
     public TeUser logIn(TeUser paUser) throws TEException {

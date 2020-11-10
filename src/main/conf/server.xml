@@ -9,7 +9,7 @@
 
     <dataSource id="DefaultDataSource" jndiName="jdbc">
         <jdbcDriver libraryRef="PostgresLib"/>
-            <properties.postgresql serverName="10.11.12.240" portNumber="5455" databaseName="document-postgres"
+            <properties.postgresql serverName="10.11.12.240" portNumber="5455" databaseName="texteditor"
                                        user="postgres" password="postgres"/>
     </dataSource>
 
