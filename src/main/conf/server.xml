@@ -42,4 +42,12 @@
     <administrator-role>
         <user>admin</user>
     </administrator-role>
+
+    <cors domain="/"
+          allowedOrigins="*"
+          allowedMethods="GET, POST, PUT, DELETE"
+          allowedHeaders="*,Authorization,message,status"
+          allowCredentials="true"
+          maxAge="0"
+          exposeHeaders="*,Authorization,message,status"/>
 </server>

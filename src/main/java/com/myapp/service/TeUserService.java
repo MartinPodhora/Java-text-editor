@@ -32,31 +32,40 @@ public class TeUserService {
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Get list of all users in Text editor")
+    @Operation(summary = "Get list of all users in Text editor.")
     public List<TeUser> getAllUsers() throws TEException {
         return dao.retrieveAllUsers();
     }
 
     @GET
-    @Path("/{username}")
+    @Path("user/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Get a user by username")
+    @Operation(summary = "Get a user by username.")
     public TeUser getUser(@PathParam("username") String username) throws TEException {
         return dao.findUser(username);
     }
 
+    @GET
+    @Path("photo/{username}")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Operation(summary = "Get a photo of user by username.")
+    public String getPhoto(@PathParam("username") String username) throws TEException {
+        return dao.getPhoto(username);
+    }
+
+
     @POST
-    @Path("/login")
+    @Path("/login/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "get user if login was successful")
-    public TeUser loginUser(TeUser user) throws TEException {
-        return dao.logIn(user);
+    @Operation(summary = "Get user if login was successful.")
+    public TeUser loginUser(@PathParam("username") String username, String password) throws TEException {
+        return dao.logIn(username, password);
     }
 
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create a new text editor user")
+    @Operation(summary = "Create a new text editor user.")
     public TeUser createUser(TeUser user) throws TEException {
         return dao.persistUser(user);
     }
@@ -64,15 +73,23 @@ public class TeUserService {
     @PUT
     @Path("/update")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Update a text editor user")
+    @Operation(summary = "Update a text editor user.")
     public TeUser updateUser(TeUser user) throws TEException {
         return dao.updateUser(user);
+    }
+
+    @PUT
+    @Path("/updatePhoto/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a photo of text editor user.")
+    public TeUser updatePhoto(@PathParam("username") String username, String photo) throws TEException {
+        return dao.updatePhoto(photo, username);
     }
 
     @DELETE
     @Path("/delete/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Delete text editor user")
+    @Operation(summary = "Delete text editor user.")
     public TeUser deleteUser(@PathParam("username") String username) throws TEException {
         return dao.deleteUser(username);
     }

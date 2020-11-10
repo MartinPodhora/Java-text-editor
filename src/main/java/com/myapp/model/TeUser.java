@@ -39,6 +39,7 @@ public class TeUser {
     @Size(min = 1, max = 50)
     private String email;
 
+    @JsonbTransient
     @Column(name = "PHOTO")
     private String photo;
 

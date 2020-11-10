@@ -1,6 +1,7 @@
 package com.myapp.dao;
 
 import com.myapp.TEException.TEException;
+import com.myapp.model.TeDocument;
 import com.myapp.model.TeUser;
 
 import javax.persistence.EntityManager;
@@ -53,22 +54,55 @@ public class TeUserPersistence {
 
     public TeUser updateUser(TeUser paUser) throws TEException {
         TeUser user = this.findUser(paUser.getUsername());
+
         this.entityManager.merge(user);
+
         return paUser;
     }
 
     public TeUser deleteUser(String username) throws TEException {
         TeUser user = this.findUser(username);
 
+        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<TeDocument> query = cb.createQuery(TeDocument.class);
+        Root<TeDocument> root = query.from(TeDocument.class);
+
+        query.select(root).where(cb.equal(root.get("user"), user));
+
+        List<TeDocument> docs = this.entityManager.createQuery(query).getResultList();
+
+        if (!docs.isEmpty()) {
+            for (TeDocument doc : docs) {
+                this.entityManager.remove(doc);
+            }
+        }
+
         this.entityManager.remove(user);
         return user;
     }
 
-    public TeUser logIn(TeUser paUser) throws TEException {
-        TeUser user = this.findUser(paUser.getUsername());
-        if (!user.getPassword().equals(paUser.getPassword())) {
+    public TeUser logIn(String username, String password) throws TEException {
+        TeUser user = this.findUser(username);
+
+        if (!user.getPassword().equals(password)) {
             throw new TEException("Wrong password.");
         }
+
+        return user;
+    }
+
+    public String getPhoto(String username) throws TEException {
+        TeUser user = this.findUser(username);
+
+        return user.getPhoto();
+    }
+
+    public TeUser updatePhoto(String photo, String username) throws TEException {
+        TeUser user = this.findUser(username);
+
+        user.setPhoto(photo);
+        this.entityManager.merge(user);
+
         return user;
     }
 }

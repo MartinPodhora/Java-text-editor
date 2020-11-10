@@ -1,7 +1,5 @@
 package com.myapp.model;
 
-
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,7 +11,6 @@ public class TeDocument {
 
     @Id
     @NotNull(message = "Text editor document id cannot be null")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID", updatable = false, nullable = false, unique = true)
     private long id;
 
