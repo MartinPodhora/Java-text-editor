@@ -87,7 +87,7 @@ public class TeDocumentPersistence {
         List<TeDocument> docs = this.entityManager.createQuery(query).getResultList();
 
         for (TeDocument doc : docs) {
-            if (doc.getId() > max) {
+            if (doc.getId() >= max) {
                 max = doc.getId() + 1;
             }
         }

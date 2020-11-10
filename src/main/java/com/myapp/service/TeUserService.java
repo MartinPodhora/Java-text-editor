@@ -86,6 +86,14 @@ public class TeUserService {
         return dao.updatePhoto(photo, username);
     }
 
+    @PUT
+    @Path("/changePassword/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Change password of text editor user.")
+    public TeUser changePassword(@PathParam("username") String username, String passwords) throws TEException {
+        return dao.changePassword(passwords, username);
+    }
+
     @DELETE
     @Path("/delete/{username}")
     @Produces(MediaType.APPLICATION_JSON)

@@ -54,8 +54,10 @@ public class TeUserPersistence {
 
     public TeUser updateUser(TeUser paUser) throws TEException {
         TeUser user = this.findUser(paUser.getUsername());
+        paUser.setPassword(user.getPassword());
+        paUser.setPhoto(user.getPhoto());
 
-        this.entityManager.merge(user);
+        this.entityManager.merge(paUser);
 
         return paUser;
     }
@@ -101,6 +103,24 @@ public class TeUserPersistence {
         TeUser user = this.findUser(username);
 
         user.setPhoto(photo);
+        this.entityManager.merge(user);
+
+        return user;
+    }
+
+    public TeUser changePassword(String passwords, String username) throws TEException {
+        TeUser user = this.findUser(username);
+        String[] passwds = passwords.split("," , 2);
+
+        if (!user.getPassword().equals(passwds[0])) {
+            throw new TEException("Wrong password");
+        }
+
+        if (passwds[1].equals(passwds[0])) {
+            throw new TEException("New password cant be same as old one");
+        }
+
+        user.setPassword(passwds[1]);
         this.entityManager.merge(user);
 
         return user;
