@@ -4,7 +4,10 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,7 +35,6 @@ public class TeUser {
     @JsonbTransient
     @Column(name = "USER_PASSWORD", nullable = false)
     @NotNull(message = "password at text editor user cannot be null")
-    @Size(min = 1, max = 50)
     private String password;
 
     @Column(name = "EMAIL")
@@ -43,17 +45,22 @@ public class TeUser {
     @Column(name = "PHOTO")
     private String photo;
 
+    @JsonbTransient
+    @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull(message = "style at text editor user cannot be null")
+    @JoinColumn(name = "TE_STYLE_ID", referencedColumnName = "ID")
+    private TeStyle style;
+
     public TeUser() {
 
     }
 
-    public TeUser(String username, String firstName, String lastName, String password, String email, String photo) {
-        this.setUsername(username);
-        this.setFirstName(firstName);
-        this.setLastName(lastName);
-        this.setPassword(password);
-        this.setEmail(email);
-        this.setPhoto(photo);
+    public TeStyle getStyle() {
+        return style;
+    }
+
+    public void setStyle(TeStyle style) {
+        this.style = style;
     }
 
     public String getUsername() {

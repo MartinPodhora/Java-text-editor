@@ -10,6 +10,8 @@ import java.util.Date;
 public class TeDocument {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "te_document_generator")
+    @SequenceGenerator(name = "te_document_generator", sequenceName = "te_document_seq", allocationSize = 1)
     @NotNull(message = "Text editor document id cannot be null")
     @Column(name = "ID", updatable = false, nullable = false, unique = true)
     private long id;
@@ -27,19 +29,11 @@ public class TeDocument {
     @Column(name = "DOC_CONTENT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "TE_USER_USERNAME", referencedColumnName = "USERNAME")
     private TeUser user;
 
     public TeDocument() {
-    }
-
-    public TeDocument(long id, String name, Date dateCreated, String content, TeUser user) {
-        this.setId(id);
-        this.setName(name);
-        this.setDateCreated(dateCreated);
-        this.setContent(content);
-        this.setUser(user);
     }
 
     public long getId() {

@@ -3,6 +3,7 @@ package com.myapp.service;
 
 import com.myapp.TEException.TEException;
 import com.myapp.dao.TeUserPersistence;
+import com.myapp.model.TeStyle;
 import com.myapp.model.TeUser;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -67,7 +68,7 @@ public class TeUserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Create a new text editor user.")
     public TeUser createUser(TeUser user) throws TEException {
-        return dao.persistUser(user);
+        return dao.createUser(user);
     }
 
     @PUT
@@ -84,6 +85,14 @@ public class TeUserService {
     @Operation(summary = "Update a photo of text editor user.")
     public TeUser updatePhoto(@PathParam("username") String username, String photo) throws TEException {
         return dao.updatePhoto(photo, username);
+    }
+
+    @PUT
+    @Path("/updateStyle/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a style of text editor user.")
+    public TeUser updateStyle(@PathParam("username") String username, TeStyle style) throws TEException {
+        return dao.updateStyle(style, username);
     }
 
     @PUT

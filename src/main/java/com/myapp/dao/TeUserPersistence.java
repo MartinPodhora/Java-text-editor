@@ -2,7 +2,9 @@ package com.myapp.dao;
 
 import com.myapp.TEException.TEException;
 import com.myapp.model.TeDocument;
+import com.myapp.model.TeStyle;
 import com.myapp.model.TeUser;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,12 +43,21 @@ public class TeUserPersistence {
         return user;
     }
 
-    public TeUser persistUser(TeUser paUser) throws TEException {
+    public TeUser createUser(TeUser paUser) throws TEException {
         TeUser user = this.entityManager.find(TeUser.class, paUser.getUsername());
+        TeStyle style = this.entityManager.find(TeStyle.class, 1L);
 
         if (user != null) {
             throw new TEException("User with specified username already exists.");
         }
+
+        if (paUser.getPassword() == null) {
+            paUser.setPassword(paUser.getUsername());
+        }
+
+        String newPsw = BCrypt.hashpw(paUser.getPassword(), BCrypt.gensalt(12));
+        paUser.setPassword(newPsw);
+        paUser.setStyle(style);
 
         this.entityManager.persist(paUser);
         return paUser;
@@ -86,7 +97,7 @@ public class TeUserPersistence {
     public TeUser logIn(String username, String password) throws TEException {
         TeUser user = this.findUser(username);
 
-        if (!user.getPassword().equals(password)) {
+        if (!BCrypt.checkpw(password, user.getPassword())) {
             throw new TEException("Wrong password.");
         }
 
@@ -108,11 +119,20 @@ public class TeUserPersistence {
         return user;
     }
 
+    public TeUser updateStyle(TeStyle style, String username) throws TEException {
+        TeUser user = this.findUser(username);
+
+        user.setStyle(style);
+        this.entityManager.merge(user);
+
+        return user;
+    }
+
     public TeUser changePassword(String passwords, String username) throws TEException {
         TeUser user = this.findUser(username);
         String[] passwds = passwords.split("," , 2);
 
-        if (!user.getPassword().equals(passwds[0])) {
+        if (!BCrypt.checkpw(passwds[0], user.getPassword())) {
             throw new TEException("Wrong password");
         }
 
@@ -120,7 +140,8 @@ public class TeUserPersistence {
             throw new TEException("New password cant be same as old one");
         }
 
-        user.setPassword(passwds[1]);
+        String newPsw = BCrypt.hashpw(passwds[1], BCrypt.gensalt(12));
+        user.setPassword(newPsw);
         this.entityManager.merge(user);
 
         return user;

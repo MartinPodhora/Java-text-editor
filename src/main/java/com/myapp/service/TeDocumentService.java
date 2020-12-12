@@ -32,9 +32,9 @@ public class TeDocumentService {
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Add a card")
+    @Operation(summary = "Add a document")
     public TeDocument addDocument(TeDocument doc) throws TEException {
-        return dao.addDocument(doc);
+        return dao.createDocument(doc);
     }
 
     @GET
@@ -42,7 +42,7 @@ public class TeDocumentService {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Get all documents for user")
     public List<TeDocument> getAllDoc(@PathParam("username") String username) throws TEException {
-        return dao.getAll(username);
+        return dao.retrieveAll(username);
     }
 
     @PUT
