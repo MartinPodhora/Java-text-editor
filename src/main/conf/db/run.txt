@@ -1,0 +1,1 @@
+docker run --rm --name documentpostgres -e POSTGRES_PASSWORD=postgres -d -p 5455:5432 -v c:/Users/matop/Desktop/skola/5.semester/VAII/semestralka-VAII/postgres/data:/var/lib/postgressql/data postgres
