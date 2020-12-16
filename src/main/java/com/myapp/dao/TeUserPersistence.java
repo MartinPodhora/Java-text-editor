@@ -65,12 +65,12 @@ public class TeUserPersistence {
 
     public TeUser updateUser(TeUser paUser) throws TEException {
         TeUser user = this.findUser(paUser.getUsername());
-        paUser.setPassword(user.getPassword());
-        paUser.setPhoto(user.getPhoto());
+        user.setFirstName(paUser.getFirstName());
+        user.setLastName(paUser.getLastName());
+        user.setEmail(paUser.getEmail());
 
-        this.entityManager.merge(paUser);
-
-        return paUser;
+        this.entityManager.merge(user);
+        return user;
     }
 
     public TeUser deleteUser(String username) throws TEException {
